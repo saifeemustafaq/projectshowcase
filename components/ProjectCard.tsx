@@ -13,7 +13,7 @@ interface ProjectCardProps {
 export default function ProjectCard({ project, isEditMode = false, onEdit, onDelete }: ProjectCardProps) {
   return (
     <div 
-      className="group rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+      className="group rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.15)] flex flex-col h-full"
       style={{ 
         backgroundColor: 'var(--card-background)',
         border: '1px solid var(--border-color)'
@@ -63,7 +63,7 @@ export default function ProjectCard({ project, isEditMode = false, onEdit, onDel
       </div>
 
       {/* Project Content */}
-      <div className="p-6">
+      <div className="p-6 flex flex-col flex-grow">
         <div className="flex items-start justify-between mb-4">
           <h3 className="text-xl font-semibold line-clamp-2 flex-1 mr-3" style={{ color: 'var(--foreground)' }}>
             {project.title}
@@ -110,6 +110,9 @@ export default function ProjectCard({ project, isEditMode = false, onEdit, onDel
             </span>
           )}
         </div>
+        
+        {/* Spacer to push buttons to bottom */}
+        <div className="flex-grow"></div>
         
         {/* Action Links */}
         <div className="grid grid-cols-2 gap-3">

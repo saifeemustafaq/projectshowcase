@@ -163,16 +163,16 @@ export default function ProjectGallery({ isEditMode = false }: ProjectGalleryPro
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
-      {/* Header */}
+      {/* Page Header */}
       <div className="border-b" style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--card-background)' }}>
         <div className="max-w-6xl mx-auto px-6 py-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
               <h1 className="text-4xl font-semibold tracking-tight" style={{ color: 'var(--foreground)' }}>
-                Project Showcase
+                {isEditMode ? 'Edit Projects' : 'Project Gallery'}
               </h1>
               <p className="mt-3 text-lg" style={{ color: 'var(--muted-foreground)' }}>
-                {isEditMode ? 'Edit Mode - Manage your projects' : 'Discover amazing projects and applications'}
+                {isEditMode ? 'Manage your projects' : 'Discover amazing projects and applications'}
               </p>
             </div>
             {isEditMode && isAuthenticated_ && (
