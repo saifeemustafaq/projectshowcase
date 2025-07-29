@@ -1,6 +1,3 @@
-// Hardcoded password hash (SHA-256 of "admin123" - replace with your desired password hash)
-const PASSWORD_HASH = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9";
-
 // Session management
 const SESSION_STORAGE_KEY = 'project_showcase_session';
 const SESSION_DURATION = 30 * 60 * 1000; // 30 minutes
@@ -11,7 +8,7 @@ export interface SessionData {
 }
 
 /**
- * Hash a password using SHA-256
+ * Hash a password using SHA-256 (client-side compatible)
  */
 export async function hashPassword(password: string): Promise<string> {
   const encoder = new TextEncoder();
@@ -22,11 +19,24 @@ export async function hashPassword(password: string): Promise<string> {
 }
 
 /**
- * Verify password against the hardcoded hash
+ * Verify password by calling API endpoint
  */
 export async function verifyPassword(password: string): Promise<boolean> {
-  const hashedInput = await hashPassword(password);
-  return hashedInput === PASSWORD_HASH;
+  try {
+    const response = await fetch('/api/auth/verify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ password }),
+    });
+    
+    const result = await response.json();
+    return result.success || false;
+  } catch (error) {
+    console.error('Error verifying password:', error);
+    return false;
+  }
 }
 
 /**
