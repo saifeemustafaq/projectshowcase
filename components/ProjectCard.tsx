@@ -8,16 +8,24 @@ interface ProjectCardProps {
   isEditMode?: boolean;
   onEdit?: (project: Project) => void;
   onDelete?: (id: string) => void;
+  onView?: (project: Project) => void;
 }
 
-export default function ProjectCard({ project, isEditMode = false, onEdit, onDelete }: ProjectCardProps) {
+export default function ProjectCard({ project, isEditMode = false, onEdit, onDelete, onView }: ProjectCardProps) {
+  const handleCardClick = () => {
+    if (!isEditMode && onView) {
+      onView(project);
+    }
+  };
+
   return (
     <div 
-      className="group rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.8)] flex flex-col h-full"
+      className={`group rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.8)] flex flex-col h-full ${!isEditMode ? 'cursor-pointer' : ''}`}
       style={{ 
         backgroundColor: 'var(--card-background)',
         border: '1px solid var(--border-color)'
       }}
+      onClick={handleCardClick}
     >
       {/* Project Preview */}
       <div className="relative aspect-video overflow-hidden" style={{ backgroundColor: 'var(--secondary)' }}>
@@ -38,7 +46,10 @@ export default function ProjectCard({ project, isEditMode = false, onEdit, onDel
         {isEditMode && (
           <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             <button
-              onClick={() => onEdit?.(project)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit?.(project);
+              }}
               className="p-2 rounded-full transition-all duration-200 hover:scale-110"
               style={{ 
                 backgroundColor: 'var(--accent)', 
@@ -51,7 +62,10 @@ export default function ProjectCard({ project, isEditMode = false, onEdit, onDel
               </svg>
             </button>
             <button
-              onClick={() => onDelete?.(project.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete?.(project.id);
+              }}
               className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-all duration-200 hover:scale-110"
               title="Delete project"
             >
@@ -122,6 +136,7 @@ export default function ProjectCard({ project, isEditMode = false, onEdit, onDel
               href={project.demoUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
               className="text-center py-3 px-4 rounded-lg font-medium transition-all duration-200 hover:scale-105"
               style={{ 
                 backgroundColor: 'var(--accent)', 
@@ -136,6 +151,7 @@ export default function ProjectCard({ project, isEditMode = false, onEdit, onDel
               href={project.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
               className="text-center py-3 px-4 rounded-lg font-medium border transition-all duration-200 hover:scale-105"
               style={{ 
                 borderColor: 'var(--border-color)',

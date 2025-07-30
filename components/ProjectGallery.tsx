@@ -6,6 +6,7 @@ import { getProjects, addProject, updateProject, deleteProject, getCategories } 
 import { isAuthenticated, extendSession } from '@/lib/auth';
 import ProjectCard from './ProjectCard';
 import ProjectFormModal from './ProjectFormModal';
+import ProjectViewModal from './ProjectViewModal';
 import AuthModal from './AuthModal';
 
 interface ProjectGalleryProps {
@@ -24,7 +25,9 @@ export default function ProjectGallery({ isEditMode = false }: ProjectGalleryPro
   // Modals
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProjectModal, setShowProjectModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | undefined>();
+  const [viewingProject, setViewingProject] = useState<Project | null>(null);
   
   // Authentication state
   const [isAuthenticated_, setIsAuthenticated_] = useState(false);
@@ -120,6 +123,11 @@ export default function ProjectGallery({ isEditMode = false }: ProjectGalleryPro
     }
     setEditingProject(project);
     setShowProjectModal(true);
+  };
+
+  const handleViewProject = (project: Project) => {
+    setViewingProject(project);
+    setShowViewModal(true);
   };
 
   const handleDeleteProject = async (id: string) => {
@@ -270,6 +278,7 @@ export default function ProjectGallery({ isEditMode = false }: ProjectGalleryPro
                 isEditMode={isEditMode && isAuthenticated_}
                 onEdit={handleEditProject}
                 onDelete={handleDeleteProject}
+                onView={handleViewProject}
               />
             ))}
           </div>
@@ -317,6 +326,15 @@ export default function ProjectGallery({ isEditMode = false }: ProjectGalleryPro
         }}
         onSubmit={handleProjectSubmit}
         project={editingProject}
+      />
+
+      <ProjectViewModal
+        isOpen={showViewModal}
+        onClose={() => {
+          setShowViewModal(false);
+          setViewingProject(null);
+        }}
+        project={viewingProject}
       />
     </div>
   );
