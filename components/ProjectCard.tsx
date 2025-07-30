@@ -13,7 +13,7 @@ interface ProjectCardProps {
 export default function ProjectCard({ project, isEditMode = false, onEdit, onDelete }: ProjectCardProps) {
   return (
     <div 
-      className="group rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.15)] flex flex-col h-full"
+      className="group rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.8)] flex flex-col h-full"
       style={{ 
         backgroundColor: 'var(--card-background)',
         border: '1px solid var(--border-color)'
@@ -26,6 +26,7 @@ export default function ProjectCard({ project, isEditMode = false, onEdit, onDel
           title={project.title}
           className="w-full h-full object-cover"
           projectId={project.id}
+          useFallbackImage={project.useFallbackImage}
         />
         {project.featured && (
           <div className="absolute top-4 left-4">

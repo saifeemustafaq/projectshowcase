@@ -12,6 +12,7 @@ const DEFAULT_PROJECTS: Omit<Project, 'id'>[] = [
     githubUrl: 'https://github.com/username/ecommerce-platform',
     category: 'Full Stack',
     featured: true,
+    useFallbackImage: false,
     createdAt: new Date().toISOString(),
   },
   {
@@ -22,6 +23,7 @@ const DEFAULT_PROJECTS: Omit<Project, 'id'>[] = [
     githubUrl: 'https://github.com/username/task-manager',
     category: 'Web App',
     featured: true,
+    useFallbackImage: false,
     createdAt: new Date().toISOString(),
   },
   {
@@ -32,6 +34,7 @@ const DEFAULT_PROJECTS: Omit<Project, 'id'>[] = [
     githubUrl: 'https://github.com/username/weather-dashboard',
     category: 'Frontend',
     featured: false,
+    useFallbackImage: false,
     createdAt: new Date().toISOString(),
   },
   {
@@ -42,6 +45,7 @@ const DEFAULT_PROJECTS: Omit<Project, 'id'>[] = [
     githubUrl: 'https://github.com/username/fitness-tracker',
     category: 'Mobile',
     featured: false,
+    useFallbackImage: false,
     createdAt: new Date().toISOString(),
   },
 ];
@@ -70,6 +74,7 @@ export async function GET() {
       githubUrl: doc.githubUrl,
       category: doc.category,
       featured: doc.featured,
+      useFallbackImage: doc.useFallbackImage || false, // Default to false for existing projects
       createdAt: doc.createdAt,
     }));
     
@@ -100,6 +105,7 @@ export async function POST(request: NextRequest) {
       githubUrl: body.githubUrl || '',
       category: body.category || 'Other',
       featured: Boolean(body.featured),
+      useFallbackImage: Boolean(body.useFallbackImage),
       createdAt: new Date().toISOString(),
     };
     

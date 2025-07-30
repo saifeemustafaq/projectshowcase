@@ -7,6 +7,7 @@ export interface Project {
   githubUrl?: string;
   category: string;
   featured: boolean;
+  useFallbackImage?: boolean;
   createdAt: string;
 }
 
@@ -18,4 +19,5 @@ export interface ProjectFormData {
   githubUrl: string;
   category: string;
   featured: boolean;
+  useFallbackImage: boolean;
 }

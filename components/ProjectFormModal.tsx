@@ -33,6 +33,7 @@ export default function ProjectFormModal({ isOpen, onClose, onSubmit, project }:
     githubUrl: '',
     category: 'Web App',
     featured: false,
+    useFallbackImage: false,
   });
   
   const [errors, setErrors] = useState<Partial<ProjectFormData>>({});
@@ -47,6 +48,7 @@ export default function ProjectFormModal({ isOpen, onClose, onSubmit, project }:
         githubUrl: project.githubUrl || '',
         category: project.category,
         featured: project.featured,
+        useFallbackImage: project.useFallbackImage || false,
       });
     } else {
       setFormData({
@@ -57,6 +59,7 @@ export default function ProjectFormModal({ isOpen, onClose, onSubmit, project }:
         githubUrl: '',
         category: 'Web App',
         featured: false,
+        useFallbackImage: false,
       });
     }
     setErrors({});
@@ -110,6 +113,7 @@ export default function ProjectFormModal({ isOpen, onClose, onSubmit, project }:
       githubUrl: '',
       category: 'Web App',
       featured: false,
+      useFallbackImage: false,
     });
     setErrors({});
     onClose();
@@ -306,6 +310,28 @@ export default function ProjectFormModal({ isOpen, onClose, onSubmit, project }:
                 Mark as featured project
               </label>
             </div>
+            
+            {/* Use Fallback Image */}
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="useFallbackImage"
+                name="useFallbackImage"
+                checked={formData.useFallbackImage}
+                onChange={handleInputChange}
+                className="h-5 w-5 rounded border-2 transition-all duration-200"
+                style={{ 
+                  borderColor: 'var(--border-color)',
+                  accentColor: 'var(--accent)'
+                }}
+              />
+              <label htmlFor="useFallbackImage" className="ml-3 text-sm font-medium" style={{ color: 'var(--foreground)' }}>
+                Use fallback image instead of preview
+              </label>
+            </div>
+            <p className="text-sm -mt-2" style={{ color: 'var(--muted-foreground)' }}>
+              When enabled, this will show a fallback image instead of trying to load the demo URL preview
+            </p>
             
             {/* Form Actions */}
             <div className="flex gap-4 pt-6">

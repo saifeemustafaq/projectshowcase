@@ -40,6 +40,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       githubUrl: project.githubUrl,
       category: project.category,
       featured: project.featured,
+      useFallbackImage: project.useFallbackImage,
       createdAt: project.createdAt,
     };
     
@@ -92,6 +93,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       githubUrl: updatedProject!.githubUrl,
       category: updatedProject!.category,
       featured: updatedProject!.featured,
+      useFallbackImage: updatedProject!.useFallbackImage,
       createdAt: updatedProject!.createdAt,
     };
     
