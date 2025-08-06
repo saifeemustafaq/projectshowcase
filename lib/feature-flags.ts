@@ -44,7 +44,7 @@ export async function setFeatureFlags(flags: FeatureFlags): Promise<void> {
 /**
  * Client-side function to update a single feature flag
  */
-export async function updateFeatureFlag(key: keyof FeatureFlags, value: boolean): Promise<FeatureFlags> {
+export async function updateFeatureFlag(key: keyof FeatureFlags, value: boolean | string): Promise<FeatureFlags> {
   const currentFlags = await getFeatureFlags();
   const updatedFlags = { ...currentFlags, [key]: value };
   await setFeatureFlags(updatedFlags);

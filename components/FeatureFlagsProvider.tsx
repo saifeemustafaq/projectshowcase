@@ -7,7 +7,7 @@ import { getFeatureFlags, updateFeatureFlag, setFeatureFlags } from '@/lib/featu
 interface FeatureFlagsContextType {
   flags: FeatureFlags;
   loading: boolean;
-  updateFlag: (key: keyof FeatureFlags, value: boolean) => Promise<void>;
+  updateFlag: (key: keyof FeatureFlags, value: boolean | string) => Promise<void>;
   resetFlags: () => Promise<void>;
 }
 
@@ -34,7 +34,7 @@ export function FeatureFlagsProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const updateFlag = async (key: keyof FeatureFlags, value: boolean) => {
+  const updateFlag = async (key: keyof FeatureFlags, value: boolean | string) => {
     try {
       const updatedFlags = await updateFeatureFlag(key, value);
       setFlags(updatedFlags);

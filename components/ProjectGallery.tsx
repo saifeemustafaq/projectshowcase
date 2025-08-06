@@ -10,6 +10,7 @@ import ProjectCard from './ProjectCard';
 import ProjectFormModal from './ProjectFormModal';
 import ProjectViewModal from './ProjectViewModal';
 import AuthModal from './AuthModal';
+import { useFeatureFlags } from './FeatureFlagsProvider';
 
 interface ProjectGalleryProps {
   isEditMode?: boolean;
@@ -17,6 +18,7 @@ interface ProjectGalleryProps {
 
 export default function ProjectGallery({ isEditMode = false }: ProjectGalleryProps) {
   const router = useRouter();
+  const { flags } = useFeatureFlags();
   const [projects, setProjects] = useState<Project[]>([]);
   const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
@@ -184,7 +186,7 @@ export default function ProjectGallery({ isEditMode = false }: ProjectGalleryPro
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
               <h1 className="text-4xl font-semibold tracking-tight" style={{ color: 'var(--foreground)' }}>
-                {isEditMode ? 'Edit Projects' : 'Project Gallery'}
+                {isEditMode ? `Edit ${flags.customGalleryTitle}` : flags.customGalleryTitle}
               </h1>
               <p className="mt-3 text-lg" style={{ color: 'var(--muted-foreground)' }}>
                 {isEditMode ? 'Manage your projects' : 'Discover amazing projects and applications'}

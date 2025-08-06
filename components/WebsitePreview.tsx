@@ -123,7 +123,8 @@ export default function WebsitePreview({ url, title, className = "", projectId, 
     if (iframeRef.current) {
       try {
         // Try to access iframe content to detect if it's actually loaded
-        const iframeDoc = iframeRef.current.contentDocument || iframeRef.current.contentWindow?.document;
+        // Accessing the document will throw if cross-origin, which is what we want
+        void (iframeRef.current.contentDocument || iframeRef.current.contentWindow?.document);
         
         // If we can't access the document, it might be cross-origin but still loaded
         // Check if the iframe has actually navigated to the URL
@@ -138,13 +139,13 @@ export default function WebsitePreview({ url, title, className = "", projectId, 
                   handleIframeError();
                   return;
                 }
-              } catch (e) {
+              } catch {
                 // Cross-origin error is expected for successful loads
               }
             }
           }, 2000);
         }
-      } catch (e) {
+      } catch {
         // Cross-origin error is expected for successful loads
       }
     }

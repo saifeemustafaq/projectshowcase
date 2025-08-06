@@ -53,7 +53,7 @@ export async function setFeatureFlagsServer(flags: FeatureFlags): Promise<void> 
 /**
  * Server-side function to update a single feature flag
  */
-export async function updateFeatureFlagServer(key: keyof FeatureFlags, value: boolean): Promise<void> {
+export async function updateFeatureFlagServer(key: keyof FeatureFlags, value: boolean | string): Promise<void> {
   try {
     const currentFlags = await getFeatureFlagsServer();
     const updatedFlags = { ...currentFlags, [key]: value };
