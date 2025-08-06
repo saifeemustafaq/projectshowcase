@@ -1,18 +1,24 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { Project, ProjectFormData } from '@/types/project';
 import { getProjects, addProject, updateProject, deleteProject, getCategories } from '@/lib/projects';
 import { isAuthenticated, extendSession } from '@/lib/auth';
+import { FiSettings } from 'react-icons/fi';
 import ProjectCard from './ProjectCard';
 import ProjectFormModal from './ProjectFormModal';
+import ProjectViewModal from './ProjectViewModal';
 import AuthModal from './AuthModal';
+import { useFeatureFlags } from './FeatureFlagsProvider';
 
 interface ProjectGalleryProps {
   isEditMode?: boolean;
 }
 
 export default function ProjectGallery({ isEditMode = false }: ProjectGalleryProps) {
+  const router = useRouter();
+  const { flags } = useFeatureFlags();
   const [projects, setProjects] = useState<Project[]>([]);
   const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
@@ -24,7 +30,9 @@ export default function ProjectGallery({ isEditMode = false }: ProjectGalleryPro
   // Modals
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProjectModal, setShowProjectModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | undefined>();
+  const [viewingProject, setViewingProject] = useState<Project | null>(null);
   
   // Authentication state
   const [isAuthenticated_, setIsAuthenticated_] = useState(false);
@@ -122,6 +130,11 @@ export default function ProjectGallery({ isEditMode = false }: ProjectGalleryPro
     setShowProjectModal(true);
   };
 
+  const handleViewProject = (project: Project) => {
+    setViewingProject(project);
+    setShowViewModal(true);
+  };
+
   const handleDeleteProject = async (id: string) => {
     if (!isAuthenticated_) {
       setShowAuthModal(true);
@@ -161,6 +174,10 @@ export default function ProjectGallery({ isEditMode = false }: ProjectGalleryPro
     }
   };
 
+  const handleSettings = () => {
+    router.push('/settings');
+  };
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
       {/* Page Header */}
@@ -169,24 +186,40 @@ export default function ProjectGallery({ isEditMode = false }: ProjectGalleryPro
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
               <h1 className="text-4xl font-semibold tracking-tight" style={{ color: 'var(--foreground)' }}>
-                {isEditMode ? 'Edit Projects' : 'Project Gallery'}
+                {isEditMode ? `Edit ${flags.customGalleryTitle}` : flags.customGalleryTitle}
               </h1>
               <p className="mt-3 text-lg" style={{ color: 'var(--muted-foreground)' }}>
                 {isEditMode ? 'Manage your projects' : 'Discover amazing projects and applications'}
               </p>
             </div>
-            {isEditMode && isAuthenticated_ && (
-              <button
-                onClick={handleAddProject}
-                className="mt-6 md:mt-0 px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
-                style={{ 
-                  backgroundColor: 'var(--accent)', 
-                  color: 'var(--accent-foreground)' 
-                }}
-              >
-                Add Project
-              </button>
-            )}
+            <div className="mt-6 md:mt-0 flex items-center gap-3">
+              {isEditMode && isAuthenticated_ && (
+                <>
+                  <button
+                    onClick={handleSettings}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all duration-200 hover:scale-105"
+                    style={{ 
+                      color: 'var(--muted-foreground)',
+                      backgroundColor: 'transparent'
+                    }}
+                    title="Settings"
+                  >
+                    <FiSettings className="w-4 h-4" />
+                    Settings
+                  </button>
+                  <button
+                    onClick={handleAddProject}
+                    className="px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                    style={{ 
+                      backgroundColor: 'var(--accent)', 
+                      color: 'var(--accent-foreground)' 
+                    }}
+                  >
+                    Add Project
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -270,6 +303,7 @@ export default function ProjectGallery({ isEditMode = false }: ProjectGalleryPro
                 isEditMode={isEditMode && isAuthenticated_}
                 onEdit={handleEditProject}
                 onDelete={handleDeleteProject}
+                onView={handleViewProject}
               />
             ))}
           </div>
@@ -317,6 +351,15 @@ export default function ProjectGallery({ isEditMode = false }: ProjectGalleryPro
         }}
         onSubmit={handleProjectSubmit}
         project={editingProject}
+      />
+
+      <ProjectViewModal
+        isOpen={showViewModal}
+        onClose={() => {
+          setShowViewModal(false);
+          setViewingProject(null);
+        }}
+        project={viewingProject}
       />
     </div>
   );
