@@ -1,6 +1,7 @@
 'use client';
 
 import { Project } from '@/types/project';
+import { useFeatureFlags } from './FeatureFlagsProvider';
 import WebsitePreview from './WebsitePreview';
 
 interface ProjectCardProps {
@@ -12,6 +13,8 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project, isEditMode = false, onEdit, onDelete, onView }: ProjectCardProps) {
+  const { flags } = useFeatureFlags();
+  
   const handleCardClick = () => {
     if (!isEditMode && onView) {
       onView(project);
@@ -27,73 +30,120 @@ export default function ProjectCard({ project, isEditMode = false, onEdit, onDel
       }}
       onClick={handleCardClick}
     >
-      {/* Project Preview */}
-      <div className="relative aspect-video overflow-hidden" style={{ backgroundColor: 'var(--secondary)' }}>
-        <WebsitePreview
-          url={project.demoUrl || ''}
-          title={project.title}
-          className="w-full h-full object-cover"
-          projectId={project.id}
-          useFallbackImage={project.useFallbackImage}
-        />
-        {project.featured && (
-          <div className="absolute top-4 left-4">
-            <span className="bg-yellow-400 text-yellow-900 px-3 py-1 text-sm font-medium rounded-full">
-              Featured
-            </span>
-          </div>
-        )}
-        {isEditMode && (
-          <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onEdit?.(project);
-              }}
-              className="p-2 rounded-full transition-all duration-200 hover:scale-110"
-              style={{ 
-                backgroundColor: 'var(--accent)', 
-                color: 'var(--accent-foreground)' 
-              }}
-              title="Edit project"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-            </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete?.(project.id);
-              }}
-              className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-all duration-200 hover:scale-110"
-              title="Delete project"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-            </button>
-          </div>
-        )}
-      </div>
+      {/* Project Preview - Only show if feature flag is enabled */}
+      {flags.websitePreview && (
+        <div className="relative aspect-video overflow-hidden" style={{ backgroundColor: 'var(--secondary)' }}>
+          <WebsitePreview
+            url={project.demoUrl || ''}
+            title={project.title}
+            className="w-full h-full object-cover"
+            projectId={project.id}
+            useFallbackImage={project.useFallbackImage}
+          />
+          {project.featured && (
+            <div className="absolute top-4 left-4">
+              <span className="bg-yellow-400 text-yellow-900 px-3 py-1 text-sm font-medium rounded-full">
+                Featured
+              </span>
+            </div>
+          )}
+          {isEditMode && (
+            <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit?.(project);
+                }}
+                className="p-2 rounded-full transition-all duration-200 hover:scale-110"
+                style={{ 
+                  backgroundColor: 'var(--accent)', 
+                  color: 'var(--accent-foreground)' 
+                }}
+                title="Edit project"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete?.(project.id);
+                }}
+                className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-all duration-200 hover:scale-110"
+                title="Delete project"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Project Content */}
       <div className="p-6 flex flex-col flex-grow">
+        {/* Header Section */}
         <div className="flex items-start justify-between mb-4">
-          <h3 className="text-xl font-semibold line-clamp-2 flex-1 mr-3" style={{ color: 'var(--foreground)' }}>
-            {project.title}
-          </h3>
-          <span 
-            className="px-3 py-1 text-sm font-medium rounded-full whitespace-nowrap"
-            style={{ 
-              backgroundColor: 'var(--secondary)', 
-              color: 'var(--secondary-foreground)' 
-            }}
-          >
-            {project.category}
-          </span>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-xl font-semibold line-clamp-2 mb-2" style={{ color: 'var(--foreground)' }}>
+              {project.title}
+            </h3>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span 
+                className="px-3 py-1 text-sm font-medium rounded-full"
+                style={{ 
+                  backgroundColor: 'var(--secondary)', 
+                  color: 'var(--secondary-foreground)' 
+                }}
+              >
+                {project.category}
+              </span>
+              {project.featured && (
+                <span className="bg-yellow-400 text-yellow-900 px-3 py-1 text-sm font-medium rounded-full">
+                  Featured
+                </span>
+              )}
+            </div>
+          </div>
+          
+          {/* Edit/Delete buttons when preview is disabled and in edit mode */}
+          {!flags.websitePreview && isEditMode && (
+            <div className="flex gap-2 ml-4">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit?.(project);
+                }}
+                className="p-2 rounded-full transition-all duration-200 hover:scale-110"
+                style={{ 
+                  backgroundColor: 'var(--accent)', 
+                  color: 'var(--accent-foreground)' 
+                }}
+                title="Edit project"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete?.(project.id);
+                }}
+                className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-all duration-200 hover:scale-110"
+                title="Delete project"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+          )}
         </div>
         
+        {/* Description */}
         <p className="text-base mb-6 line-clamp-3 leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
           {project.description}
         </p>

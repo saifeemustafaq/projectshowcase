@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { Project, ProjectFormData } from '@/types/project';
 import { getProjects, addProject, updateProject, deleteProject, getCategories } from '@/lib/projects';
 import { isAuthenticated, extendSession } from '@/lib/auth';
+import { FiSettings } from 'react-icons/fi';
 import ProjectCard from './ProjectCard';
 import ProjectFormModal from './ProjectFormModal';
 import ProjectViewModal from './ProjectViewModal';
@@ -14,6 +16,7 @@ interface ProjectGalleryProps {
 }
 
 export default function ProjectGallery({ isEditMode = false }: ProjectGalleryProps) {
+  const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
   const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
@@ -169,6 +172,10 @@ export default function ProjectGallery({ isEditMode = false }: ProjectGalleryPro
     }
   };
 
+  const handleSettings = () => {
+    router.push('/settings');
+  };
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
       {/* Page Header */}
@@ -183,18 +190,34 @@ export default function ProjectGallery({ isEditMode = false }: ProjectGalleryPro
                 {isEditMode ? 'Manage your projects' : 'Discover amazing projects and applications'}
               </p>
             </div>
-            {isEditMode && isAuthenticated_ && (
-              <button
-                onClick={handleAddProject}
-                className="mt-6 md:mt-0 px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
-                style={{ 
-                  backgroundColor: 'var(--accent)', 
-                  color: 'var(--accent-foreground)' 
-                }}
-              >
-                Add Project
-              </button>
-            )}
+            <div className="mt-6 md:mt-0 flex items-center gap-3">
+              {isEditMode && isAuthenticated_ && (
+                <>
+                  <button
+                    onClick={handleSettings}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all duration-200 hover:scale-105"
+                    style={{ 
+                      color: 'var(--muted-foreground)',
+                      backgroundColor: 'transparent'
+                    }}
+                    title="Settings"
+                  >
+                    <FiSettings className="w-4 h-4" />
+                    Settings
+                  </button>
+                  <button
+                    onClick={handleAddProject}
+                    className="px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                    style={{ 
+                      backgroundColor: 'var(--accent)', 
+                      color: 'var(--accent-foreground)' 
+                    }}
+                  >
+                    Add Project
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
