@@ -55,7 +55,13 @@ export function createSession(): SessionData {
   const sessionData = { token, expiresAt };
   
   if (typeof window !== 'undefined') {
-    sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(sessionData));
+    try {
+      sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(sessionData));
+      // Force synchronous storage by immediately reading it back
+      sessionStorage.getItem(SESSION_STORAGE_KEY);
+    } catch (error) {
+      console.error('Error creating session:', error);
+    }
   }
   
   return sessionData;
