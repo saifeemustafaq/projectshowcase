@@ -7,9 +7,10 @@ interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  message?: string;
 }
 
-export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
+export default function AuthModal({ isOpen, onClose, onSuccess, message }: AuthModalProps) {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -70,7 +71,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
           </div>
           
           <p className="mb-6 text-lg" style={{ color: 'var(--muted-foreground)' }}>
-            Please enter the password to access edit mode.
+            {message || 'Please enter the password to access edit mode.'}
           </p>
           
           <form onSubmit={handleSubmit}>

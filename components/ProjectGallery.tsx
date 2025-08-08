@@ -14,9 +14,12 @@ import { useFeatureFlags } from './FeatureFlagsProvider';
 
 interface ProjectGalleryProps {
   isEditMode?: boolean;
+  requestEdit?: boolean;
+  onAuthSuccess?: () => void;
+  skipAuthCheck?: boolean;
 }
 
-export default function ProjectGallery({ isEditMode = false }: ProjectGalleryProps) {
+export default function ProjectGallery({ isEditMode = false, requestEdit = false, onAuthSuccess, skipAuthCheck = false }: ProjectGalleryProps) {
   const router = useRouter();
   const { flags } = useFeatureFlags();
   const [projects, setProjects] = useState<Project[]>([]);
@@ -77,10 +80,17 @@ export default function ProjectGallery({ isEditMode = false }: ProjectGalleryPro
   }, []);
 
   useEffect(() => {
-    if (isEditMode && !isAuthenticated_) {
+    // Only show auth modal for edit mode if we're not skipping auth check
+    if (isEditMode && !isAuthenticated_ && !skipAuthCheck) {
       setShowAuthModal(true);
     }
-  }, [isEditMode, isAuthenticated_]);
+  }, [isEditMode, isAuthenticated_, skipAuthCheck]);
+
+  useEffect(() => {
+    if (requestEdit && !isAuthenticated_) {
+      setShowAuthModal(true);
+    }
+  }, [requestEdit, isAuthenticated_]);
 
   useEffect(() => {
     filterAndSortProjects();
@@ -110,6 +120,16 @@ export default function ProjectGallery({ isEditMode = false }: ProjectGalleryPro
   const handleAuthSuccess = () => {
     setIsAuthenticated_(true);
     extendSession();
+    
+    // If this was triggered by a requestEdit, navigate to edit mode
+    if (requestEdit) {
+      // Call parent callback to clean up URL
+      onAuthSuccess?.();
+      // Small delay to ensure session storage is written before navigation
+      setTimeout(() => {
+        router.push('/projects/edit');
+      }, 50);
+    }
   };
 
   const handleAddProject = () => {
@@ -341,6 +361,7 @@ export default function ProjectGallery({ isEditMode = false }: ProjectGalleryPro
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         onSuccess={handleAuthSuccess}
+        message={requestEdit ? 'Please enter the password to access edit mode.' : undefined}
       />
       
       <ProjectFormModal
